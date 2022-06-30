@@ -115,7 +115,7 @@ class LabelmeObj(object):
                         f.write(' ')
                     f.write('\n')
     
-    def draw_seg_png(self, save=False) -> None:
+    def draw_seg_png(self, save:bool=False) -> None:
         """
         Save segmentation png, if not save, then show segmentation.
         """
@@ -129,6 +129,16 @@ class LabelmeObj(object):
         else:
             self._show_img(background)
     
+    def draw_view_png(self) -> None:
+        color = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (125, 125, 125)]
+        background = cv2.imread(self.path)
+        lanes = self.get_lanes_interpolate()
+        for ind, lane in enumerate(lanes):
+            for i in range(len(lane[0])):
+                pt = (int(lane[0][i]), int(lane[1][i]))
+                cv2.circle(background, pt, 1, color[ind], 4)
+        cv2.imwrite(osp.join(self.root, f"{self.jsonname}_view.png"), background)
+    
     def get_all_info(self) -> dict:
         """Get meta info like clrnet"""
         result = {}
@@ -141,6 +151,7 @@ class LabelmeObj(object):
         return result
     
     def main(self) -> dict:
+        self.draw_view_png()
         try:
             self.to_new_txt()
         except:
