@@ -57,7 +57,7 @@ class LabelmeObj(object):
 
     def _interpolate_linear(self, x:list, y:list) -> Callable:
         """Linear interpolate"""
-        f_linear = interpolate.interp1d(x, y)
+        f_linear = interpolate.interp1d(x, y, kind='linear')
         return f_linear
 
     def _interpolate_b_spline(self, x:list, y:list, x_new:np.ndarray, der:int=0) -> np.ndarray:
@@ -86,7 +86,7 @@ class LabelmeObj(object):
         pt_x = [x[0] for x in lane]
         pt_y = [x[1] for x in lane]
         interpolate_y = self._generate_linespace(pt_y[0], pt_y[-1])
-        if len(pt_x) < 4:
+        if len(pt_x) < 10:
             f_linear = self._interpolate_linear(pt_y, pt_x)
             return f_linear(interpolate_y).astype(int).astype(float), interpolate_y.astype(int).astype(float)
         else:
@@ -102,7 +102,7 @@ class LabelmeObj(object):
     
     def to_new_txt(self, suffix:str='.lines') -> None:
         """Write new txt label"""
-        if osp.exists(osp.join(self.root, f"{self.jsonname}_{suffix}.txt")):
+        if osp.exists(osp.join(self.root, f"{self.jsonname}{suffix}.txt")):
             raise ValueError("You may delete original txt first.")
         else:
             lanes = self.get_lanes_interpolate()
