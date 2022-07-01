@@ -5,6 +5,7 @@ import numpy as np
 from scipy import interpolate
 import json
 import os.path as osp
+import re
 
 
 class LabelmeObj(object):
@@ -44,11 +45,15 @@ class LabelmeObj(object):
     
     @property
     def labels_(self):
-        return [int(x[-1]) for x in self.labels]
+        labels_ = []
+        for x in self.labels:
+            labels_.append(int(re.search('\d', x)[0]))
+        return labels_
+        # return [int(x[-1]) for x in self.labels]
 
     @property
     def binary_label(self):
-        return np.array([1 if f"lane{x+1}" else 0 for x in range(len(self.labels))])
+        return np.array([1 if x+1 in self.labels_ else 0 for x in range(4)])
 
     def _generate_linespace(self, start:Union[float, int], end:Union[float, int]) -> np.ndarray:
         x = np.arange(start, end, self.step)
@@ -130,6 +135,7 @@ class LabelmeObj(object):
             self._show_img(background)
     
     def draw_view_png(self) -> None:
+        """Draw view image"""
         color = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (125, 125, 125)]
         background = cv2.imread(self.path)
         lanes = self.get_lanes_interpolate()
