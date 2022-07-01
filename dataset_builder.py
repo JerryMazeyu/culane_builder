@@ -59,7 +59,7 @@ class CULaneTestBuilder(object):
             self.img_files = [path]
 
     def main(self) -> None:
-        for img in self.img_files:
+        for img in tqdm(self.img_files):
             result = {}
             result['img_name'] = osp.basename(img)
             result['img_path'] = img

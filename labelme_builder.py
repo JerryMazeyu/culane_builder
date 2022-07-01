@@ -56,6 +56,8 @@ class LabelmeObj(object):
         return np.array([1 if x+1 in self.labels_ else 0 for x in range(4)])
 
     def _generate_linespace(self, start:Union[float, int], end:Union[float, int]) -> np.ndarray:
+        if start > end:
+            start, end = end, start
         x = np.arange(start, end, self.step)
         x = np.append(x, end)
         return x
@@ -139,6 +141,7 @@ class LabelmeObj(object):
         color = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (125, 125, 125)]
         background = cv2.imread(self.path)
         lanes = self.get_lanes_interpolate()
+        assert(len(lanes) <= 4), f"{self.path} => {len(lanes)}"
         for ind, lane in enumerate(lanes):
             for i in range(len(lane[0])):
                 pt = (int(lane[0][i]), int(lane[1][i]))
