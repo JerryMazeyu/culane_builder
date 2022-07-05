@@ -7,7 +7,7 @@ import pickle as pkl
 
 def main():
     args = parse_args()
-    if args.train == 1:
+    if int(args.train) == 1:
         print("Training mode.")
         args.train = True
     else:
